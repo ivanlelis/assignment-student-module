@@ -1,17 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { StudentService } from './student.service';
 import { Student } from './entities/student.entity';
 
-@Injectable()
-export class StudentService {
-    constructor(
-        @InjectRepository(Student)
-        private studentRepository: Repository<Student>,
-    ) { }
+@Controller('students')
+export class StudentController {
+    constructor(private readonly studentService: StudentService) { }
 
-    async create(studentData: Partial<Student>): Promise<Student> {
-        const student = this.studentRepository.create(studentData);
-        return this.studentRepository.save(student);
+    // Endpoint to create a student
+    @Post()
+    create(@Body() studentData: Partial<Student>): Promise<Student> {
+        return this.studentService.create(studentData);
+    }
+
+    // Endpoint to fetch all students
+    @Get()
+    findAll(): Promise<Student[]> {
+        return this.studentService.findAll();
     }
 }
